@@ -1,69 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { SpinnerCircular } from 'spinners-react';
+import LoginPage from './pages/LoginPage';
+import Pages from './pages/Pages';
+import Topnav from './pages/Topnav';
+import { Toaster } from 'react-hot-toast';
 import './App.css';
 
 function App() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const REAL_PASSWORD = '123456';
-  const REAL_EMAIL = 'email@gmail.com';
+  const [people, setPeople] = useState([]);
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    if (email === REAL_EMAIL && password === REAL_PASSWORD) {
-      setIsLoggedIn(true);
-      alert('Logged in');
-    } else {
-      alert('Wrong credentials');
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem('people'));
+    if (items) {
+      setPeople(items);
     }
-  };
+  }, []);
+
+  console.log(people);
 
   return (
     <>
-      {isLoggedIn ? (
-        <div></div>
-      ) : (
-        <div className='h-screen w-screen flex justify-center items-center bg-slate-300'>
-          <div className='flex justify-center items-center p-8 h-3/4 w-1/3 bg-red-200'>
-            <div className='flex flex-col items-center justify-center bg-lime-400 w-full h-full p-4'>
-              <h1 className='text-4xl font-bold text-center uppercase mb-4'>
-                Login
-              </h1>
-              <form className='flex flex-col w-full gap-4 mt-4'>
-                <input
-                  type='email'
-                  placeholder='Email'
-                  value={email}
-                  onChange={handleEmailChange}
-                  className='p-2 border-2 border-gray-400'
-                />
-                <input
-                  type='password'
-                  placeholder='Password'
-                  value={password}
-                  onChange={handlePasswordChange}
-                  className='p-2 border-2 border-gray-400'
-                />
-                <button
-                  onClick={(e) => handleFormSubmit(e)}
-                  className='bg-blue-500 text-white p-2 rounded-md'
-                >
-                  Sign In
-                </button>
-              </form>
-            </div>
+      {!isLoggedIn && (
+        <LoginPage
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
+          isLoading={isLoading}
+          setIsLoading={setIsLoading}
+        />
+      )}
+
+      {isLoading && (
+        <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center'>
+          <div className='bg-white p-4 rounded-md'>
+            <SpinnerCircular size={72} />
           </div>
         </div>
       )}
+
+      {isLoggedIn && (
+        <div className='bg-gray-300 flex flex-col h-screen w-screen'>
+          <Topnav setIsLoggedIn={setIsLoggedIn} />
+
+          <main className='w-full flex-1 p-4'>
+            <Pages people={people} setPeople={setPeople} />
+          </main>
+        </div>
+      )}
+      <Toaster />
     </>
   );
 }
