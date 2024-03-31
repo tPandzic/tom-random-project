@@ -6,6 +6,7 @@ import PersonButtonGroup from './PersonButtonGroup';
 
 const CardsPage = ({ people, setPeople }) => {
   const [selectedPersonIndex, setSelectedPersonIndex] = useState(null);
+  const [editMode, setEditMode] = useState(false);
 
   const [person, setPerson] = useState({
     firstName: '',
@@ -19,6 +20,8 @@ const CardsPage = ({ people, setPeople }) => {
     mother: '',
     father: '',
   });
+
+  const [editedPerson, setEditedPerson] = useState({});
 
   const createNewPerson = () => {
     if (
@@ -35,16 +38,22 @@ const CardsPage = ({ people, setPeople }) => {
       ...person,
     };
     setPeople([...people, newPerson]);
+    setSelectedPersonIndex(null);
     toast.success(`${person.firstName} ${person.lastName} has been created!`);
   };
 
   const updateExistingPerson = (index) => {
     for (let i = 0; i < people.length; i++) {
       if (people[i].index === index) {
-        people[i] = person;
+        if (editMode) {
+          people[i] = editedPerson;
+        } else {
+          people[i] = person;
+        }
+
         setPeople([...people]);
         toast.success(
-          `${person.firstName} ${person.lastName} has been updated!`
+          `${editedPerson?.firstName} ${editedPerson?.lastName} has been updated!`
         );
       }
     }
@@ -86,9 +95,15 @@ const CardsPage = ({ people, setPeople }) => {
               <CardPage
                 key={person.index}
                 person={person}
+                selectedPersonIndex={selectedPersonIndex}
                 setSelectedPersonIndex={setSelectedPersonIndex}
                 setPerson={setPerson}
                 removeExistingPerson={removeExistingPerson}
+                updateExistingPerson={updateExistingPerson}
+                editedPerson={editedPerson}
+                setEditedPerson={setEditedPerson}
+                editMode={editMode}
+                setEditMode={setEditMode}
               />
             );
           })}

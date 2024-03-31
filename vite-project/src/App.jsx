@@ -19,8 +19,6 @@ function App() {
     }
   }, []);
 
-  console.log(people);
-
   return (
     <>
       {!isLoggedIn && (
@@ -41,7 +39,7 @@ function App() {
       )}
 
       {isLoggedIn && (
-        <div className='bg-gray-300 flex flex-col h-screen w-screen'>
+        <div className='bg-gray-300 flex flex-col h-full w-full'>
           <Topnav setIsLoggedIn={setIsLoggedIn} />
 
           <main className='w-full flex-1 p-4'>
